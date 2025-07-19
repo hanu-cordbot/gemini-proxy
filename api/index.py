@@ -1,14 +1,22 @@
-import os, requests, flask
-app = flask.Flask(__name__)
-GEMINI_KEY = os.environ["GEMINI_KEY"]
+# api/index.py  – Vercel “HTTP Function” style
+import os, json, urllib.request, urllib.error
 
-@app.route("/", methods=["POST"])
-def relay():
-    r = requests.post(
-        "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"gemini-2.5-flash:generateContent?key={GEMINI_KEY}",
-        headers={"Content-Type": "application/json"},
-        data=flask.request.data,
-        timeout=60,
-    )
-    return r.content, r.status_code, {"Content-Type": "application/json"}
+GEMINI_URL = (
+    "https://generativelanguage.googleapis.com/v1beta/models/"
+    "gemini-2.5-flash:generateContent?key=" + os.environ["GEMINI_KEY"]
+)
+
+def handler(request):
+    try:
+        with urllib.request.urlopen(
+            urllib.request.Request(
+                GEMINI_URL,
+                data=request.body,
+                headers={"Content-Type": "application/json"},
+            ),
+            timeout=60,
+        ) as resp:
+            data = resp.read()
+        return data.decode(), resp.status, {"Content-Type": "application/json"}
+    except urllib.error.HTTPError as e:
+        return e.read().decode(), e.code, {"Content-Type": "application/json"}
