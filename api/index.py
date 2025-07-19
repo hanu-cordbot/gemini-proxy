@@ -9,7 +9,8 @@ GEMINI_KEY = os.environ["GEMINI_KEY"]
 def relay():
     r = requests.post(
         "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"gemini-2.5-flash:generateContent?key={GEMINI_KEY}",
+        "gemini-2.5-flash:generateContent",
+        params={"key": GEMINI_KEY},
         headers={"Content-Type": "application/json"},
         data=request.data,
         timeout=60,
