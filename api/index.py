@@ -1,9 +1,8 @@
-# api/index.py
 import os, requests
 from flask import Flask, request
 
 app = Flask(__name__)
-GEMINI_KEY = os.environ["GEMINI_KEY"]
+GEMINI_KEY = os.getenv("GEMINI_KEY", "")
 
 @app.route("/", methods=["POST"])
 def relay():
